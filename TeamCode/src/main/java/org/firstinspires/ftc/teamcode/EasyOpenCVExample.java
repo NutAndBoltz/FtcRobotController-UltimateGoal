@@ -39,7 +39,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @TeleOp
 public class EasyOpenCVExample extends LinearOpMode
 {
-    OpenCvInternalCamera phoneCam;
+//    OpenCvInternalCamera phoneCam;
+    OpenCvInternalCamera webcam;
     SkystoneDeterminationPipeline pipeline;
 
     @Override
@@ -47,24 +48,41 @@ public class EasyOpenCVExample extends LinearOpMode
     {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+//        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+
         pipeline = new SkystoneDeterminationPipeline();
-        phoneCam.setPipeline(pipeline);
+        webcam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+//        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+//            }
+//        });
+
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
         });
+        telemetry.addLine("Waiting for start");
+        telemetry.update();
 
+        /*
+         * Wait for the user to press start on the Driver Station
+         */
         waitForStart();
 
         while (opModeIsActive())

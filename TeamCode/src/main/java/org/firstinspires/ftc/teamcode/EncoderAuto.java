@@ -32,96 +32,105 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
- * This file illustrates the concept of driving a path based on time.
+ * This file illustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
  * The code is structured as a LinearOpMode
  *
- * The code assumes that you do NOT have encoders on the wheels,
- *   otherwise you would use: PushbotAutoDriveByEncoder;
+ * The code REQUIRES that you DO have encoders on the wheels,
+ *   otherwise you would use: PushbotAutoDriveByTime;
+ *
+ *  This code ALSO requires that the drive Motors have been configured such that a positive
+ *  power command moves them forwards, and causes the encoders to count UP.
  *
  *   The desired path in this example is:
- *   - Drive forward for 3 seconds
- *   - Spin right for 1.3 seconds
- *   - Drive Backwards for 1 Second
+ *   - Drive forward for 48 inches
+ *   - Spin right for 12 Inches
+ *   - Drive Backwards for 24 inches
  *   - Stop and close the claw.
  *
- *  The code is written in a simple form with no optimizations.
- *  However, there are several ways that this type of sequence could be streamlined,
+ *  The code is written using a method called: encoderDrive(speed, leftInches, rightInches, timeoutS)
+ *  that performs the actual movement.
+ *  This methods assumes that each movement is relative to the last stopping place.
+ *  There are other ways to perform encoder based moves, but this method is probably the simplest.
+ *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutonomousV1", group="Pushbot")
+@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Pushbot")
 @Disabled
-public class AutonomousV1 extends LinearOpMode {
+public class EncoderAuto extends LinearOpMode {
 
-    /* Declare OpMode members. */
-    HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
-    private ElapsedTime     runtime = new ElapsedTime();
+    generalMovements general = new generalMovements();
 
-
-    static final double     FORWARD_SPEED = 0.6;
-    static final double     TURN_SPEED    = 0.5;
 
     @Override
     public void runOpMode() {
 
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
-        robot.init(hardwareMap);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");    //
-        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
+        //move backward
 
-        // Step 1:  Drive forward for 3 seconds
-        robot.leftDrive.setPower(FORWARD_SPEED);
-        robot.rightDrive.setPower(FORWARD_SPEED);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
 
-        // Step 2:  Spin right for 1.3 seconds
-        robot.leftDrive.setPower(TURN_SPEED);
-        robot.rightDrive.setPower(-TURN_SPEED);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.3)) {
-            telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
+        //Wobble goal put in the correct target zone
 
-        // Step 3:  Drive Backwards for 1 Second
-        robot.leftDrive.setPower(-FORWARD_SPEED);
-        robot.rightDrive.setPower(-FORWARD_SPEED);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
+            //Scan to see how many rings there are
 
-        // Step 4:  Stop and close the claw.
-        robot.leftDrive.setPower(0);
-        robot.rightDrive.setPower(0);
-        robot.leftClaw.setPosition(1.0);
-        robot.rightClaw.setPosition(0.0);
+            //Figure out what location the rings correspond to
+
+                //0 = A, close
+
+                //1 = B, middle
+
+                //4 = C, farthest
+
+            //Drive to that location
+
+            //Place the wobble goal
+
+
+        //Launching rings into high goal (12 pts each, max 36)
+
+            //Drive to the launch line
+
+            //With some math and navigation targets, figure out best launch placement
+
+            //Launch ring 1
+
+            //Launch ring 2
+
+            //Launch ring 3
+
+
+        //Parking over the white launch line (5 pts)
+
+            //figure out where parking line is
+
+            //Drive there
+
+            //Stop, take a well deserved breather
+
+
+
+
+
+
+
+
+        sleep(1000);     // pause for servos to move
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(1000);
     }
+
+
 }

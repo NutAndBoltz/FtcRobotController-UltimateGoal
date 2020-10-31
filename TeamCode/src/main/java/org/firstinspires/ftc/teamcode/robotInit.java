@@ -11,12 +11,16 @@ public class robotInit {
     public DcMotor motorFR;
     public DcMotor motorBL;
     public DcMotor motorBR;
-    //    public DcMotor motorArm1;
-//    public DcMotor motorArm2;
-    public Servo foundationClaw;
-    public Servo servoOrange;
-    public Servo servo2;
-//    public Servo servoArm;
+    public DcMotor pitcherMotor; //rotating wheel to launch rings
+    public DcMotor elbowMotor; //wobble goal arm
+
+    public Servo wobbleSnatcher; //wobble goal servo claw
+    public Servo ringFlicker; // launch ring pusher
+
+//    public Servo foundationClaw;
+//    public Servo servoOrange;
+//    public Servo servo2;
+
 
     public ModernRoboticsI2cGyro   gyro    = null;
 
@@ -65,20 +69,20 @@ public class robotInit {
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
 
+        pitcherMotor = hardwareMap.get(DcMotor.class, "pitcherMotor");
+        elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
+        pitcherMotor.setDirection(DcMotor.Direction.FORWARD);
+        elbowMotor.setDirection(DcMotor.Direction.FORWARD);
 
-//        motorArm1 = hardwareMap.get(DcMotor.class, "motorArm1");
-//        motorArm1.setDirection(DcMotor.Direction.FORWARD);
-//
-//        motorArm2 = hardwareMap.get(DcMotor.class, "motorArm2");
-//        motorArm2.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         motorBL.setPower(0);
         motorBR.setPower(0);
         motorFR.setPower(0);
         motorFL.setPower(0);
-//        motorArm1.setPower(0);
-//        motorArm2.setPower(0);
+        pitcherMotor.setPower(0);
+        elbowMotor.setPower(0);
+
 
 
         // Set all motors to run without encoders.
@@ -87,17 +91,21 @@ public class robotInit {
         motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        motorArm1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        motorArm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pitcherMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        elbowMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         // Define and initialize ALL installed servos.
-        foundationClaw = hardwareMap.get(Servo.class, "foundationClaw");
-        servoOrange = hardwareMap.get(Servo.class, "servoOrange");
-        servo2 = hardwareMap.get(Servo.class, "servo2");
+
+        wobbleSnatcher = hardwareMap.get(Servo.class, "wobbleSnatcher");
+        ringFlicker = hardwareMap.get(Servo.class, "ringFlicker");
+
+//        foundationClaw = hardwareMap.get(Servo.class, "foundationClaw");
+//        servoOrange = hardwareMap.get(Servo.class, "servoOrange");
+//        servo2 = hardwareMap.get(Servo.class, "servo2");
 
         //init servoArm so it doesn't drag on ground
-        servo2.setPosition(0.8); //0.3
-        servoOrange.setPosition(0.8);
+//        servo2.setPosition(0.8); //0.3
+//        servoOrange.setPosition(0.8);
     }
 }

@@ -341,6 +341,20 @@ public class generalMovements{
         robot.motorBL.setPower(speed);          robot.motorBR.setPower(-speed);
     }
 
+    public void placeWobble(){
+        //move motor down
+        while (runtime.seconds() < 2){
+            robot.elbowMotor.setPower(1);
+        }
+        //unclamp servo
+        //move arm back up
+    }
+
+    public void launchRing(){
+        //servo pushes ring forward
+        //wheel spins until launch, spin speed = distance launched
+    }
+
     public void stopRobot()
     {
         robot.motorFL.setPower(0);
@@ -359,16 +373,16 @@ public class generalMovements{
 //        }
 //    }
 
-    public void grabStone()
-    {
-        robot.servo2.setPosition(0); //0.3
-        robot.servoOrange.setPosition(0.8);
-    }
-    public void releaseStone()
-    {
-        robot.servoOrange.setPosition(0);
-        robot.servo2.setPosition(1);
-    }
+//    public void grabStone()
+//    {
+//        robot.servo2.setPosition(0); //0.3
+//        robot.servoOrange.setPosition(0.8);
+//    }
+//    public void releaseStone()
+//    {
+//        robot.servoOrange.setPosition(0);
+//        robot.servo2.setPosition(1);
+//    }
 
 
     String opMode ="";

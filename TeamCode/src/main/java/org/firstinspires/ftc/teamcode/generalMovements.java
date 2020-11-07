@@ -341,13 +341,31 @@ public class generalMovements{
         robot.motorBL.setPower(speed);          robot.motorBR.setPower(-speed);
     }
 
-    public void placeWobble(){
+    public void grabWobble(){
         //move motor down
-        while (runtime.seconds() < 2){
-            robot.elbowMotor.setPower(1);
+        robot.elbowMotor.setPower(1);
+        runtime.reset();
+        while (runtime.seconds() < 0.2){
         }
+
         //unclamp servo
+        robot.elbowMotor.setPower(0);
+        robot.wobbleSnatcher.setPosition(0.6);
+
+        //wait
+        runtime.reset();
+        while (runtime.seconds() < 1){
+        }
+
+        //clamp wobble goal
+        robot.wobbleSnatcher.setPosition(0.3);
+
         //move arm back up
+        robot.elbowMotor.setPower(-1);
+        runtime.reset();
+        while (runtime.seconds() < 0.2){
+        }
+        robot.elbowMotor.setPower(0);
     }
 
     public void launchRing(){
@@ -373,16 +391,6 @@ public class generalMovements{
 //        }
 //    }
 
-//    public void grabStone()
-//    {
-//        robot.servo2.setPosition(0); //0.3
-//        robot.servoOrange.setPosition(0.8);
-//    }
-//    public void releaseStone()
-//    {
-//        robot.servoOrange.setPosition(0);
-//        robot.servo2.setPosition(1);
-//    }
 
 
     String opMode ="";

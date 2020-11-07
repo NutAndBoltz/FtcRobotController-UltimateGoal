@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Disabled
 public class robotInit {
+
     /* Public OpMode members. */
     public DcMotor motorFL;
     public DcMotor motorFR;
@@ -17,9 +20,7 @@ public class robotInit {
     public Servo wobbleSnatcher; //wobble goal servo claw
     public Servo ringFlicker; // launch ring pusher
 
-//    public Servo foundationClaw;
-//    public Servo servoOrange;
-//    public Servo servo2;
+
 
 
     public ModernRoboticsI2cGyro   gyro    = null;
@@ -48,32 +49,26 @@ public class robotInit {
     }
 
 
-
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hardwareMap = ahwMap;
 
-        //gyroSensor define and initialization
-
-        //gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
 
         // Define and Initialize Motors
-
         motorFL = hardwareMap.get(DcMotor.class, "motor_fl");
         motorFR = hardwareMap.get(DcMotor.class, "motor_fr");
         motorBL = hardwareMap.get(DcMotor.class, "motor_bl");
         motorBR = hardwareMap.get(DcMotor.class, "motor_br");
+        pitcherMotor = hardwareMap.get(DcMotor.class, "pitcherMotor");
+        elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
+
         motorFL.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.REVERSE);
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
-
-        pitcherMotor = hardwareMap.get(DcMotor.class, "pitcherMotor");
-        elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
         pitcherMotor.setDirection(DcMotor.Direction.FORWARD);
         elbowMotor.setDirection(DcMotor.Direction.FORWARD);
-
 
         // Set all motors to zero power
         motorBL.setPower(0);
@@ -96,16 +91,12 @@ public class robotInit {
 
 
         // Define and initialize ALL installed servos.
-
         wobbleSnatcher = hardwareMap.get(Servo.class, "wobbleSnatcher");
         ringFlicker = hardwareMap.get(Servo.class, "ringFlicker");
 
-//        foundationClaw = hardwareMap.get(Servo.class, "foundationClaw");
-//        servoOrange = hardwareMap.get(Servo.class, "servoOrange");
-//        servo2 = hardwareMap.get(Servo.class, "servo2");
 
-        //init servoArm so it doesn't drag on ground
-//        servo2.setPosition(0.8); //0.3
-//        servoOrange.setPosition(0.8);
+        //init servos
+        wobbleSnatcher.setPosition(0.3);
+
     }
 }

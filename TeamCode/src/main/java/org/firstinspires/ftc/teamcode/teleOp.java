@@ -58,16 +58,6 @@ public class teleOp extends LinearOpMode {
 
 
             }
-            if (gamepad1.right_trigger > 0.3) {
-                //arm should move down
-                general.robot.elbowMotor.setPower(0.3);
-            }
-
-            if (gamepad1.left_trigger > 0.3) {
-                //arm should move right
-                general.robot.elbowMotor.setPower(-0.2);
-
-            }
 
 
 

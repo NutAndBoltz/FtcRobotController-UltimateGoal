@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class armRobotInit {
     public Servo wobbleSnatcher; //wobble goal servo claw
+    public DcMotor elbowMotor; //wobble goal arm
 
     //from Encoder Sample
     double     COUNTS_PER_MOTOR_REV    = 537.6 ;
@@ -14,9 +16,9 @@ public class armRobotInit {
     double     DRIVE_SPEED             = 0.5;
     double     teleOP_FORWARD_SPEED    = 1;
 
+
     /* local OpMode members. */
     HardwareMap hardwareMap           =  null;
-    ElapsedTime runtime  = new ElapsedTime();
 
     /* Constructor */
     public armRobotInit(){
@@ -30,8 +32,13 @@ public class armRobotInit {
 
         // Define and initialize ALL installed servos.
         wobbleSnatcher = hardwareMap.get(Servo.class, "wobbleSnatcher");
+        wobbleSnatcher.setPosition(1); //open the latch
 
-        //init servos
-        wobbleSnatcher.setPosition(0.3);
+
+        //Define and initialize ALL installed motors
+        elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
+        elbowMotor.setDirection(DcMotor.Direction.FORWARD);
+
+
     }
 }

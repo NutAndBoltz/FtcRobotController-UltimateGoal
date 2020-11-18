@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-
+@Disabled
+@TeleOp
 public class armTest extends LinearOpMode{
 
     //robot init
@@ -20,7 +23,7 @@ public class armTest extends LinearOpMode{
         // Define and initialize ALL installed servos.
         wobbleSnatcher = hardwareMap.get(Servo.class, "wobbleSnatcher");
         wobbleSnatcher.setPosition(1); //open the latch
-
+        boolean openToggle = true;
 
         //Define and initialize ALL installed motors
         elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
@@ -32,27 +35,21 @@ public class armTest extends LinearOpMode{
 
         while (opModeIsActive()) {
 
-            //TODO test toggle button for wobble servo
-//            boolean openToggle = false;
-//            if (gamepad1.b && openToggle == false) {
-//                //open the claw
-//                general.robot.wobbleSnatcher.setPosition(0.6);
-//
-//            }
-//            if (gamepad1.b && openToggle == true) {
-//                //close the claw
-//                general.robot.wobbleSnatcher.setPosition(0.3);
-//
-//            }
-
-            if (gamepad1.b) {
-                //close the claw
-                wobbleSnatcher.setPosition(0.3);
-            }
-            if (gamepad1.y) {
+            if (gamepad1.b && !openToggle) {
                 //open the claw
-                wobbleSnatcher.setPosition(1);
+                openToggle = true;
+                wobbleSnatcher.setPosition(0.6);
+                telemetry.addData("Claw Status", "Open");
+                telemetry.update();
             }
+            if (gamepad1.b && openToggle) {
+                //close the claw
+                openToggle = false;
+                wobbleSnatcher.setPosition(1);
+                telemetry.addData("Claw Status", "Closed");
+                telemetry.update();
+            }
+
 
 
             if (gamepad1.right_bumper) {
@@ -99,6 +96,7 @@ public class armTest extends LinearOpMode{
         elbowMotor.setPower(Math.abs(DRIVE_SPEED));
 
     }
+
 
 
 }

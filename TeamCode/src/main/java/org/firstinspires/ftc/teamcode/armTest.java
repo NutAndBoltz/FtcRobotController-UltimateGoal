@@ -53,11 +53,21 @@ public class armTest extends LinearOpMode{
 
 
             if (gamepad1.right_bumper) {
-                raise(10);
+                raise(5);
             }
 
             if (gamepad1.left_bumper) {
-                lower(10);
+                lower(5);
+            }
+
+            //pick up function
+            if (gamepad1.y) {
+                pickUp();
+            }
+
+            //drop off function
+            if (gamepad1.a) {
+                dropWobbleGoal();
             }
 
         }
@@ -69,11 +79,11 @@ public class armTest extends LinearOpMode{
     //TODO make autonomous pick up and drop off functions
     public void raise(double count) {
 
-        int newelbowMotorTarget;
+        int newElbowMotorTarget;
 
         // Determine new target position, and pass to motor controller
-        newelbowMotorTarget = elbowMotor.getCurrentPosition() + (int) (count);
-        elbowMotor.setTargetPosition(newelbowMotorTarget);
+        newElbowMotorTarget = elbowMotor.getCurrentPosition() + (int) (count);
+        elbowMotor.setTargetPosition(newElbowMotorTarget);
 
         // Turn On RUN_TO_POSITION
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -84,11 +94,11 @@ public class armTest extends LinearOpMode{
 
     public void lower(double count) {
 
-        int newelbowMotorTarget;
+        int newElbowMotorTarget;
 
         // Determine new target position, and pass to motor controller
-        newelbowMotorTarget = elbowMotor.getCurrentPosition() - (int) (count);
-        elbowMotor.setTargetPosition(newelbowMotorTarget);
+        newElbowMotorTarget = elbowMotor.getCurrentPosition() - (int) (count);
+        elbowMotor.setTargetPosition(newElbowMotorTarget);
 
         // Turn On RUN_TO_POSITION
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -97,7 +107,22 @@ public class armTest extends LinearOpMode{
 
     }
 
+    public void pickUp() {
 
+        //move into position
+        wobbleSnatcher.setPosition(0.3); //close the claw
+        raise(10);
+        telemetry.addData("The Wobble Goal", "Has Risen");
+        telemetry.update();
+
+    }
+
+    // The function for the drop-off of the wobble goal
+    public void dropWobbleGoal() {
+        lower(5); // lower arm
+        wobbleSnatcher.setPosition(0.6); // open claw
+        raise(5); // raise arm
+    }
 
 }
 

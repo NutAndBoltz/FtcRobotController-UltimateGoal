@@ -69,6 +69,11 @@ public class armTest extends LinearOpMode{
             if (gamepad1.a) {
                 dropWobbleGoal();
             }
+            
+            //drop wobble goal
+            if (gamepad1.a) {
+                dropWobbleGoal();
+            }  
 
         }
     }
@@ -104,7 +109,14 @@ public class armTest extends LinearOpMode{
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         elbowMotor.setPower(Math.abs(DRIVE_SPEED));
-
+        
+    }
+        
+    // The function for the drop-off of the wobble goal
+    public void dropWobbleGoal() {
+        lower(5); // lower arm
+        wobbleSnatcher.setPosition(0.6); // open claw
+        raise(5); // raise arm
     }
 
     public void pickUp() {

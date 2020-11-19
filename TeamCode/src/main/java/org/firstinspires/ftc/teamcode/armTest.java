@@ -93,8 +93,19 @@ public class armTest extends LinearOpMode{
         // Turn On RUN_TO_POSITION
         elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        elbowMotor.setPower(Math.abs(DRIVE_SPEED));
+      
+       elbowMotor.setPower(Math.abs(DRIVE_SPEED));
 
+        public void pickUp(double count) {
+        if (gampad1.a) {
+            
+            WobbleSnatcher.setPosition(0.6);
+            //move into position
+            WobbleSnatcher.setPosition(1);
+            raise(10);
+            telemetry.addData("The Wobble Goal", "Has Risen");
+                telemetry.update();
+    }
     }
 
 

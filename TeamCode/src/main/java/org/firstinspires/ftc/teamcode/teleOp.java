@@ -3,7 +3,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+
+//@Disabled
 @TeleOp
 public class teleOp extends LinearOpMode {
     generalMovements general = new generalMovements();
@@ -18,32 +19,36 @@ public class teleOp extends LinearOpMode {
             double horizontal = gamepad1.left_stick_x; //move left, right
             double turn = gamepad1.right_stick_x; //turn left, right
 
+            telemetry.addData("Motor FL", general.robot.motorFL);
+            telemetry.addLine();
+            telemetry.update();
+
             general.robot.motorFL.setPower(vertical + horizontal + turn);
             general.robot.motorFR.setPower(vertical - horizontal - turn);
             general.robot.motorBL.setPower(vertical - horizontal + turn);
             general.robot.motorBR.setPower(vertical + horizontal - turn);
 
-            if (gamepad1.dpad_down) {
-
-            }
-            if (gamepad1.dpad_up) {
-
-            }
-            if (gamepad1.dpad_left) {
-
-            }
-            if (gamepad1.dpad_right) {
-
-            }
-            if (gamepad1.y) {
-
-            }
-            if (gamepad1.a) {
-
-            }
-            if (gamepad1.x) {
-
-            }
+//            if (gamepad1.dpad_down) {
+//
+//            }
+//            if (gamepad1.dpad_up) {
+//
+//            }
+//            if (gamepad1.dpad_left) {
+//
+//            }
+//            if (gamepad1.dpad_right) {
+//
+//            }
+//            if (gamepad1.y) {
+//
+//            }
+//            if (gamepad1.a) {
+//
+//            }
+//            if (gamepad1.x) {
+//
+//            }
             boolean openToggle = false;
             if (gamepad1.b && openToggle == false) {
                 //open the claw
@@ -57,7 +62,7 @@ public class teleOp extends LinearOpMode {
             }
 
 
-            }
+        }
 
 
 
@@ -65,6 +70,6 @@ public class teleOp extends LinearOpMode {
             telemetry.addLine();
             telemetry.update();
 
-        }
     }
+}
 

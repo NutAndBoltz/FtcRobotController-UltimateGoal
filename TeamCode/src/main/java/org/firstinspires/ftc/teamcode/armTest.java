@@ -76,7 +76,6 @@ public class armTest extends LinearOpMode{
 
 
     //General Movements
-    //TODO make autonomous pick up and drop off functions
     public void raise(double count) {
 
         int newElbowMotorTarget;

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class generalMovements{
     int cameraMonitorViewId=0; //used for Vuforia_Thread
 
-    robotInit robot = new robotInit();
+    public robotInit robot = new robotInit();
     ElapsedTime runtime = new ElapsedTime();
 
     //auto mode functions
@@ -343,13 +343,13 @@ public class generalMovements{
 
     public void grabWobble(){
         //move motor down
-        robot.elbowMotor.setPower(1);
+//        robot.elbowMotor.setPower(1);
         runtime.reset();
         while (runtime.seconds() < 0.2){
         }
 
         //unclamp servo
-        robot.elbowMotor.setPower(0);
+//        robot.elbowMotor.setPower(0);
         robot.wobbleSnatcher.setPosition(0.6);
 
         //wait
@@ -361,11 +361,11 @@ public class generalMovements{
         robot.wobbleSnatcher.setPosition(0.3);
 
         //move arm back up
-        robot.elbowMotor.setPower(-1);
+//        robot.elbowMotor.setPower(-1);
         runtime.reset();
         while (runtime.seconds() < 0.2){
         }
-        robot.elbowMotor.setPower(0);
+//        robot.elbowMotor.setPower(0);
     }
 
     public void launchRing(){

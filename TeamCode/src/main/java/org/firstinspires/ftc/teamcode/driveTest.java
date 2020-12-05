@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.HardwareMap;
         import com.qualcomm.robotcore.hardware.Servo;
 
@@ -26,10 +27,10 @@ public class driveTest extends LinearOpMode {
         motorBR = hardwareMap.get(DcMotor.class, "motor_br");
         pitcherMotor = hardwareMap.get(DcMotor.class, "pitcherMotor");
 
-        motorFL.setDirection(DcMotor.Direction.REVERSE);
-        motorBL.setDirection(DcMotor.Direction.REVERSE);
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.FORWARD); //before r
+        motorFR.setDirection(DcMotor.Direction.REVERSE); //before f
         motorBR.setDirection(DcMotor.Direction.FORWARD);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
         pitcherMotor.setDirection(DcMotor.Direction.FORWARD);
 
         wobbleSnatcher = hardwareMap.get(Servo.class, "wobbleSnatcher");
@@ -41,14 +42,10 @@ public class driveTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             double vertical = gamepad1.left_stick_y; //move forward, backward
-            double horizontal = gamepad1.left_stick_x; //move left, right
-            double turn = gamepad1.right_stick_x; //turn left, right
+            double horizontal = -gamepad1.left_stick_x; //move left, right
+            double turn = -gamepad1.right_stick_x; //turn left, right
 
             //TODO make the three class system work (robotInit, generalMovements, teleOp/EncouderAuto
-            //TODO make strafing happen with left joystick (robot strafes with right joystick right now)
-            //TODO make all wheels move in same direction when going forward and backward
-            //Moving forward BL/BR wheels go forward, FL/FR wheels go backward
-            //Moving backward FL/FR wheels go forward, BL/BR wheels go backward
 
             motorFL.setPower(vertical + horizontal + turn);
             motorFR.setPower(vertical - horizontal - turn);

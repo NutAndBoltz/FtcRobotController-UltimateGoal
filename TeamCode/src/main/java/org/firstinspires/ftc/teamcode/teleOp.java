@@ -57,9 +57,9 @@ public class teleOp extends LinearOpMode {
 //            if (gamepad1.dpad_right) {
 //
 //            }
-//            if (gamepad1.y) {
-//
-//            }
+            if (gamepad1.left_trigger > 0.2) {
+                robot.intakeMotor.setPower(1);
+            }
 //            if (gamepad1.a) {
 //
 //            }

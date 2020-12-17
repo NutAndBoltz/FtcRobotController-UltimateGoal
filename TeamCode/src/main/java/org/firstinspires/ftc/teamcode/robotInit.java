@@ -17,6 +17,7 @@ public class robotInit {
     public DcMotor motorBR;
     public DcMotor  pitcherMotor; //rotating wheel to launch rings
     public DcMotor elbowMotor; //wobble goal arm
+    public DcMotor intakeMotor;
 
     public Servo wobbleSnatcher; //wobble goal servo claw
     public Servo ringFlicker; // launch ring pusher
@@ -63,13 +64,15 @@ public class robotInit {
         motorBR = hardwareMap.get(DcMotor.class, "motor_br");
         pitcherMotor = hardwareMap.get(DcMotor.class, "pitcherMotor");
         elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         motorFL.setDirection(DcMotor.Direction.FORWARD);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
-        motorBR.setDirection(DcMotor.Direction.FORWARD);
-        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorBR.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.FORWARD);
         pitcherMotor.setDirection(DcMotor.Direction.FORWARD);
         elbowMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         motorBL.setPower(0);
@@ -78,7 +81,7 @@ public class robotInit {
         motorFL.setPower(0);
         pitcherMotor.setPower(0);
         elbowMotor.setPower(0);
-
+        intakeMotor.setPower(0);
 
 
         // Set all motors to run without encoders.
@@ -89,6 +92,7 @@ public class robotInit {
         motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pitcherMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         // Define and initialize ALL installed servos.

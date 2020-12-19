@@ -26,7 +26,7 @@ public class EncoderAuto extends LinearOpMode {
     ElapsedTime runtime = new ElapsedTime();
 
     OpenCvCamera webcam;
-    EasyOpenCVExample.SkystoneDeterminationPipeline pipeline;
+    SkystoneDeterminationPipeline pipeline;
 
     @Override
     public void runOpMode() {
@@ -36,7 +36,7 @@ public class EncoderAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
-        pipeline = new EasyOpenCVExample.SkystoneDeterminationPipeline();
+        pipeline = new SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
 
         resetEncoder();
@@ -58,58 +58,50 @@ public class EncoderAuto extends LinearOpMode {
 
 
         //Wobble goal put in the correct target zone
-
-        while (opModeIsActive()) {
-            //Scan to see how many rings there are
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.addData("Position", pipeline.position);
-            telemetry.update();
-        }
-/*
-        if(cvTest.pipeline.position == "FOUR"){
-            telemetry.addData("Detected", "four rings - your if statment");
+        dropWobbleGoal();
+        if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
+            telemetry.addData("Detected", "four rings");
             telemetry.update();
             //4 = C, farthest
-            moveForward(109);
-            moveLeft(12);
+//            moveForward(109);
+//            moveLeft(12);
 
             //Place the wobble goal
 //            dropWobbleGoal();
 
             //move to the launch line's designates spot
-            moveRight(20);
-            moveBackward(50); // go back 3 tiles
+//            moveRight(20);
+//            moveBackward(50); // go back 3 tiles
 
-        } else if (cvTest.pipeline.position == EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.ONE){
-            telemetry.addData("Detected", "one ring - your if statment");
+        } else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
+            telemetry.addData("Detected", "one ring");
             telemetry.update();
             //1 = B, middle
-            moveForward(90);
-            moveRight(12);
+//            moveForward(90);
+//            moveRight(12);
 
             //Place the wobble goal
 //            dropWobbleGoal();
 
             //move to the launch line's designates spot
-            moveBackward(25); // go back 1 whole tile
+//                moveBackward(25); // go back 1 whole tile
 
-        } else if (cvTest.pipeline.position == EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.NONE){
-            telemetry.addData("Detected", "no rings - your if statment");
+        } else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
+            telemetry.addData("Detected", "no rings");
             telemetry.update();
 
             //0 = A, close
-            moveForward(65);
-            moveLeft(12);
+//            moveForward(65);
+//            moveLeft(12);
 
             //Place the wobble goal
 //            dropWobbleGoal();
 
             //move to the launch line's designates spot
-            moveRight(24);
+//            moveRight(24);
 
         }
 
-*/
         //TODO move robot to optimal launching place behind the launch line
 
         //TODO Launching rings into high goal (12 pts each, max 36)
@@ -123,14 +115,62 @@ public class EncoderAuto extends LinearOpMode {
         // Stop, take a well deserved breather
 
 
-
 //        sleep(1000);     // pause for servos to move
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+//            telemetry.addData("Path", "Complete");
+//            telemetry.update();
     }
 
 
+    // The function for the drop-off of the wobble goal
+    public void dropWobbleGoal() {
+
+        raise(50);
+
+        robot.wobbleSnatcher.setPosition(1); // open claw
+    }
+
+    public void raise(double count) {
+
+        int newElbowMotorTarget;
+
+        // Determine new target position, and pass to motor controller
+        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int) (count);
+        robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
+
+        // Turn On RUN_TO_POSITION
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.elbowMotor.setPower(0.3);
+
+        while (opModeIsActive() && robot.elbowMotor.isBusy()) {
+            // Display it for the driver.
+            telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        stopRobot();
+
+        // Turn off RUN_TO_POSITION
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void lower(double count) {
+
+        int newElbowMotorTarget;
+
+        // Determine new target position, and pass to motor controller
+        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() - (int) (count);
+        robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
+
+        // Turn On RUN_TO_POSITION
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.elbowMotor.setPower(Math.abs(robot.DRIVE_SPEED));
+
+    }
 
     //Functions
     public void resetEncoder()
@@ -394,35 +434,6 @@ public class EncoderAuto extends LinearOpMode {
         }
     }
 
-    public void raise(double count) {
-
-        int newElbowMotorTarget;
-
-        // Determine new target position, and pass to motor controller
-        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int) (count);
-        robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
-
-        // Turn On RUN_TO_POSITION
-        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.elbowMotor.setPower(Math.abs(robot.DRIVE_SPEED));
-
-    }
-
-    public void lower(double count) {
-
-        int newElbowMotorTarget;
-
-        // Determine new target position, and pass to motor controller
-        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() - (int) (count);
-        robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
-
-        // Turn On RUN_TO_POSITION
-        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.elbowMotor.setPower(Math.abs(robot.DRIVE_SPEED));
-
-    }
 
     public void pickUp() {
 
@@ -434,12 +445,7 @@ public class EncoderAuto extends LinearOpMode {
 
     }
 
-    // The function for the drop-off of the wobble goal
-    public void dropWobbleGoal() {
-        lower(5); // lower arm
-        robot.wobbleSnatcher.setPosition(0.6); // open claw
-        raise(5); // raise arm
-    }
+
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
@@ -462,10 +468,10 @@ public class EncoderAuto extends LinearOpMode {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(100,130);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(120,170);
 
-        static final int REGION_WIDTH = 90;
-        static final int REGION_HEIGHT = 90;
+        static final int REGION_WIDTH = 50;
+        static final int REGION_HEIGHT = 50;
 
         final int FOUR_RING_THRESHOLD = 150;
         final int ONE_RING_THRESHOLD = 135;
@@ -486,7 +492,7 @@ public class EncoderAuto extends LinearOpMode {
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
+        public volatile SkystoneDeterminationPipeline.RingPosition position = SkystoneDeterminationPipeline.RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -520,13 +526,13 @@ public class EncoderAuto extends LinearOpMode {
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
+            position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD){
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
+                position = SkystoneDeterminationPipeline.RingPosition.FOUR;
             }else if (avg1 > ONE_RING_THRESHOLD){
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.ONE;
+                position = SkystoneDeterminationPipeline.RingPosition.ONE;
             }else{
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.NONE;
+                position = SkystoneDeterminationPipeline.RingPosition.NONE;
             }
 
             Imgproc.rectangle(

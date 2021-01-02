@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //@Disabled
@@ -12,6 +13,8 @@ public class teleOp extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
+        boolean openToggle = false;
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -20,15 +23,13 @@ public class teleOp extends LinearOpMode {
             double horizontal = -gamepad1.left_stick_x; //move left, right
             double turn = -gamepad1.right_stick_x; //turn left, right
 
-            telemetry.addData("Motor FL", robot.motorFL);
-            telemetry.addLine();
-            telemetry.update();
-
+            //driving
             robot.motorFL.setPower(vertical + horizontal + turn);
             robot.motorFR.setPower(vertical - horizontal - turn);
             robot.motorBL.setPower(vertical - horizontal + turn);
             robot.motorBR.setPower(vertical + horizontal - turn);
 
+            //flywheel
             if(gamepad1.dpad_down){
                 robot.pitcherMotor.setPower(0);
             }
@@ -45,37 +46,45 @@ public class teleOp extends LinearOpMode {
                 robot.pitcherMotor.setPower(0.9);
             }
 
-//            if (gamepad1.dpad_down) {
-//
+//            if (gamepad1.left_trigger > 0.2) {
+//                robot.intakeMotor.setPower(1);
 //            }
-//            if (gamepad1.dpad_up) {
-//
-//            }
-//            if (gamepad1.dpad_left) {
-//
-//            }
-//            if (gamepad1.dpad_right) {
-//
-//            }
-            if (gamepad1.left_trigger > 0.2) {
-                robot.intakeMotor.setPower(1);
-            }
-//            if (gamepad1.a) {
-//
-//            }
-//            if (gamepad1.x) {
-//
-//            }
-            boolean openToggle = false;
-            if (gamepad1.b && openToggle == false) {
-                //open the claw
-                robot.wobbleSnatcher.setPosition(0.6);
 
-            }
-            if (gamepad1.b && openToggle == true) {
-                //close the claw
-                robot.wobbleSnatcher.setPosition(0.3);
+            //wobble servo open/close
+//            if (gamepad1.b && openToggle == false) {
+//                //open the claw
+//                robot.wobbleSnatcher.setPosition(0.6);
+//
+//            }
+//            if (gamepad1.b && openToggle == true) {
+//                //close the claw
+//                robot.wobbleSnatcher.setPosition(0.3);
+//
+//            }
 
+            if(gamepad1.a){
+                robot.wobbleSnatcher.setPosition(1);
+            }
+            if(gamepad1.y){
+                robot.wobbleSnatcher.setPosition(0);
+            }
+
+            if(gamepad1.x){
+                robot.ringFlicker.setPosition(0.5);
+            }
+            if(gamepad1.b) {
+                robot.ringFlicker.setPosition(0.25);
+            }
+
+
+            //up arm
+            if(gamepad1.left_bumper){
+                lower(30);
+            }
+
+            //down arm
+            if(gamepad1.right_bumper){
+                raise(10);
             }
 
 
@@ -98,6 +107,59 @@ public class teleOp extends LinearOpMode {
             robot.pitcherMotor.setPower(0.9);
         }
         robot.pitcherMotor.setPower(0);
+    }
+
+    public void raise(double count) {
+
+        int newElbowMotorTarget;
+
+        // Determine new target position, and pass to motor controller
+        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int) (count);
+        robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
+
+        // Turn On RUN_TO_POSITION
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.elbowMotor.setPower(0.3);
+
+        while (opModeIsActive() && robot.elbowMotor.isBusy()) {
+            // Display it for the driver.
+            telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
+            telemetry.update();
+        }
+
+//         Stop all motion;
+//        stopRobot();
+
+//         Turn off RUN_TO_POSITION
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void lower(double count) {
+
+        int newElbowMotorTarget;
+
+        // Determine new target position, and pass to motor controller
+        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() - (int) (count);
+        robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
+
+        // Turn On RUN_TO_POSITION
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.elbowMotor.setPower(0.3);
+
+        while (opModeIsActive() && robot.elbowMotor.isBusy()) {
+            // Display it for the driver.
+            telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
+            telemetry.update();
+        }
+
+//        // Stop all motion;
+//        stopRobot();
+//
+//        // Turn off RUN_TO_POSITION
+//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
 

@@ -15,7 +15,7 @@ public class robotInit {
     public DcMotor motorFR;
     public DcMotor motorBL;
     public DcMotor motorBR;
-    public DcMotor  pitcherMotor; //rotating wheel to launch rings
+    public DcMotor pitcherMotor; //rotating wheel to launch rings
     public DcMotor elbowMotor; //wobble goal arm
     public DcMotor intakeMotor;
 
@@ -70,7 +70,7 @@ public class robotInit {
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
-        pitcherMotor.setDirection(DcMotor.Direction.FORWARD);
+        pitcherMotor.setDirection(DcMotor.Direction.REVERSE);
         elbowMotor.setDirection(DcMotor.Direction.REVERSE);
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
 

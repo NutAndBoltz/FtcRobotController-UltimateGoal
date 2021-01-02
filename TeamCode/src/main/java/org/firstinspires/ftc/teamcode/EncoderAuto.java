@@ -58,7 +58,7 @@ public class EncoderAuto extends LinearOpMode {
 
 
         //Wobble goal put in the correct target zone
-        dropWobbleGoal();
+        /*
         if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
             telemetry.addData("Detected", "four rings");
             telemetry.update();
@@ -101,26 +101,42 @@ public class EncoderAuto extends LinearOpMode {
 //            moveRight(24);
 
         }
+*/
+        lower(50);
 
         //TODO move robot to optimal launching place behind the launch line
+        moveForward(70);
+        /*
+        moveRight(34);
 
         //TODO Launching rings into high goal (12 pts each, max 36)
-
-//            for (int i = 0; i < 3; i++){
-//                launchRingHigh(4);
-//            }
-
+        for (int i = 0; i < 3; i++){
+            launchRingHigh(4);
+            telemetry.addData("Launching Ring", "High");
+            telemetry.update();
+        }
 
         // TODO make sure we're over the line
+        moveForward(5);
+*/
         // Stop, take a well deserved breather
+        sleep(1000);     // pause for servos to move
 
-
-//        sleep(1000);     // pause for servos to move
-
-//            telemetry.addData("Path", "Complete");
-//            telemetry.update();
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
     }
 
+    public void launchRingHigh(int seconds){
+        //servo pushes ring forward
+        robot.ringFlicker.setPosition(1); //We need to test this
+
+        //wheel spins until launch, spin speed = distance launched
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < seconds)) {
+            robot.pitcherMotor.setPower(0.9);
+        }
+        robot.pitcherMotor.setPower(0);
+    }
 
     // The function for the drop-off of the wobble goal
     public void dropWobbleGoal() {
@@ -149,10 +165,10 @@ public class EncoderAuto extends LinearOpMode {
             telemetry.update();
         }
 
-        // Stop all motion;
+//         Stop all motion;
         stopRobot();
 
-        // Turn off RUN_TO_POSITION
+//         Turn off RUN_TO_POSITION
         robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
@@ -168,8 +184,19 @@ public class EncoderAuto extends LinearOpMode {
         // Turn On RUN_TO_POSITION
         robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.elbowMotor.setPower(Math.abs(robot.DRIVE_SPEED));
+        robot.elbowMotor.setPower(0.3);
 
+        while (opModeIsActive() && robot.elbowMotor.isBusy()) {
+            // Display it for the driver.
+            telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
+            telemetry.update();
+        }
+
+//        // Stop all motion;
+//        stopRobot();
+//
+//        // Turn off RUN_TO_POSITION
+//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //Functions
@@ -403,17 +430,7 @@ public class EncoderAuto extends LinearOpMode {
 
 
 
-    public void launchRingHigh(int seconds){
-        //servo pushes ring forward
-        robot.ringFlicker.setPosition(0.6); //We need to test this
 
-        //wheel spins until launch, spin speed = distance launched
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < seconds)) {
-            robot.pitcherMotor.setPower(0.9);
-        }
-        robot.pitcherMotor.setPower(0);
-    }
 
     public void stopRobot()
     {

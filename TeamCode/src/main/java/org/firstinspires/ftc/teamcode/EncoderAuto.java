@@ -58,11 +58,11 @@ public class EncoderAuto extends LinearOpMode {
 
 
         //Place wobble goal in the correct target zone
-/*
+// /*
         if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
-            telemetry.addData("Detected", "four rings");
+            telemetry.addData("Detected", "four rings!");
             telemetry.update();
-
+        /*
             pickUpWobble();
 
             //Move away from the rings on the field
@@ -72,37 +72,82 @@ public class EncoderAuto extends LinearOpMode {
             moveForward(55);
 
             //angle launch ramp to high goal
-            turnright(5.5);
+            turnright(5.3);
 
             //launch 3 preloaded rings
-            for (int i = 0; i < 3; i++){
-                launchRingHigh(1);
+            robot.pitcherMotor.setPower(0.69); //power up flywheel for 1.5 secs
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+            }
+
+            for (int i = 0; i < 3; i++){ //launch 3 rings
+                launchRingHigh(4);
                 telemetry.addData("Launching Ring", "High");
                 telemetry.update();
             }
+            robot.pitcherMotor.setPower(0); //power off flywheel
 
             //turn to face forward
+            turnleft(5.3);
 
             //drive to box C
+            moveForward(49);
 
             //Place the wobble goal
             dropWobbleGoal();
 
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+            }
+
             //drive backwards until parked over line
+            moveBackward(30);
+        */
 
         } else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-            telemetry.addData("Detected", "one ring");
+            telemetry.addData("Detected", "one ring"); //1 = B, middle
             telemetry.update();
-            //1 = B, middle
-//            moveForward(90);
-//            moveRight(12);
+        /*
+            pickUpWobble();
+
+            //Move away from the rings on the field
+            moveLeft(16);
+
+            //move to launch line       //90 in total distance
+            moveForward(55);
+
+            //angle launch ramp to high goal
+            turnright(5.3);
+
+            //launch 3 preloaded rings
+            robot.pitcherMotor.setPower(0.69); //power up flywheel for 1.5 secs
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+            }
+
+            for (int i = 0; i < 3; i++){ //launch 3 rings
+                launchRingHigh(4);
+                telemetry.addData("Launching Ring", "High");
+                telemetry.update();
+            }
+            robot.pitcherMotor.setPower(0); //power off flywheel
+
+            //turn to face forward
+            turnleft(3);
+
+            //move to box B
+            moveForward(26);
 
             //Place the wobble goal
-//            dropWobbleGoal();
+            dropWobbleGoal();
 
-            //move to the launch line's designates spot
-//                moveBackward(25); // go back 1 whole tile
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+            }
 
+            //drive backwards until parked over line
+            moveBackward(15);
+        */
         } else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
             telemetry.addData("Detected", "no rings");
             telemetry.update();
@@ -119,11 +164,13 @@ public class EncoderAuto extends LinearOpMode {
 
         }
 
-*/
-        //TODO Launching rings into high goal (12 pts each, max 36)
-        robot.pitcherMotor.setPower(0.7); //power up flywheel for 1.5 secs
+//*/
+
+/*
+        //testing ring launch code
+        robot.pitcherMotor.setPower(0.64); //power up flywheel for 1.5 secs
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+        while (opModeIsActive() && (runtime.seconds() < 2.5)) {
         }
 
         for (int i = 0; i < 3; i++){ //launch 3 rings
@@ -132,7 +179,7 @@ public class EncoderAuto extends LinearOpMode {
             telemetry.update();
         }
         robot.pitcherMotor.setPower(0); //power off flywheel
-
+*/
 
 
 
@@ -624,7 +671,7 @@ public class EncoderAuto extends LinearOpMode {
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile SkystoneDeterminationPipeline.RingPosition position = SkystoneDeterminationPipeline.RingPosition.FOUR;
+        public volatile SkystoneDeterminationPipeline.RingPosition position = SkystoneDeterminationPipeline.RingPosition.ONE;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -649,7 +696,9 @@ public class EncoderAuto extends LinearOpMode {
         {
             inputToCb(input);
 
-            avg1 = (int) Core.mean(region1_Cb).val[0];
+//            avg1 = (int) Core.mean(region1_Cb).val[0];
+            avg1 = 140;
+
 
             Imgproc.rectangle(
                     input, // Buffer to draw on

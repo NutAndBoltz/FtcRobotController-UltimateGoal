@@ -119,7 +119,7 @@ public class teleOp extends LinearOpMode {
         int newElbowMotorTarget;
 
         // Determine new target position, and pass to motor controller
-        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() - (int) (count);
+        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int)(count);
         robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
 
         // Turn On RUN_TO_POSITION
@@ -127,6 +127,7 @@ public class teleOp extends LinearOpMode {
 
         robot.elbowMotor.setPower(0.3);
 
+        runtime.reset();
         while (opModeIsActive() && robot.elbowMotor.isBusy()) {
             // Display it for the driver.
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
@@ -146,14 +147,15 @@ public class teleOp extends LinearOpMode {
         int newElbowMotorTarget;
 
         // Determine new target position, and pass to motor controller
-        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int) (count);
+        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() - (int) (count);
         robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
 
         // Turn On RUN_TO_POSITION
         robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         robot.elbowMotor.setPower(0.3);
-        //TODO test with wait time to eliminate debounce
+
+        runtime.reset();
         while (opModeIsActive() && robot.elbowMotor.isBusy()) {
             // Display it for the driver.
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);

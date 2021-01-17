@@ -57,21 +57,38 @@ public class EncoderAuto extends LinearOpMode {
         waitForStart();
 
 
-        //Wobble goal put in the correct target zone
-        /*
+        //Place wobble goal in the correct target zone
+/*
         if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
             telemetry.addData("Detected", "four rings");
             telemetry.update();
-            //4 = C, farthest
-//            moveForward(109);
-//            moveLeft(12);
+
+            pickUpWobble();
+
+            //Move away from the rings on the field
+            moveLeft(16);
+
+            //move to launch line       //109 in total distance
+            moveForward(55);
+
+            //angle launch ramp to high goal
+            turnright(5.5);
+
+            //launch 3 preloaded rings
+            for (int i = 0; i < 3; i++){
+                launchRingHigh(1);
+                telemetry.addData("Launching Ring", "High");
+                telemetry.update();
+            }
+
+            //turn to face forward
+
+            //drive to box C
 
             //Place the wobble goal
-//            dropWobbleGoal();
+            dropWobbleGoal();
 
-            //move to the launch line's designates spot
-//            moveRight(20);
-//            moveBackward(50); // go back 3 tiles
+            //drive backwards until parked over line
 
         } else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
             telemetry.addData("Detected", "one ring");
@@ -101,24 +118,24 @@ public class EncoderAuto extends LinearOpMode {
 //            moveRight(24);
 
         }
+
 */
-        lower(50);
-
-        //TODO move robot to optimal launching place behind the launch line
-        moveForward(70);
-        /*
-        moveRight(34);
-
         //TODO Launching rings into high goal (12 pts each, max 36)
-        for (int i = 0; i < 3; i++){
+        robot.pitcherMotor.setPower(0.7); //power up flywheel for 1.5 secs
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+        }
+
+        for (int i = 0; i < 3; i++){ //launch 3 rings
             launchRingHigh(4);
             telemetry.addData("Launching Ring", "High");
             telemetry.update();
         }
+        robot.pitcherMotor.setPower(0); //power off flywheel
 
-        // TODO make sure we're over the line
-        moveForward(5);
-*/
+
+
+
         // Stop, take a well deserved breather
         sleep(1000);     // pause for servos to move
 
@@ -126,32 +143,13 @@ public class EncoderAuto extends LinearOpMode {
         telemetry.update();
     }
 
-    public void launchRingHigh(int seconds){
-        //servo pushes ring forward
-        robot.ringFlicker.setPosition(1); //We need to test this
-
-        //wheel spins until launch, spin speed = distance launched
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < seconds)) {
-            robot.pitcherMotor.setPower(0.9);
-        }
-        robot.pitcherMotor.setPower(0);
-    }
-
-    // The function for the drop-off of the wobble goal
-    public void dropWobbleGoal() {
-
-        raise(50);
-
-        robot.wobbleSnatcher.setPosition(1); // open claw
-    }
-
+    //Functions
     public void raise(double count) {
 
         int newElbowMotorTarget;
 
         // Determine new target position, and pass to motor controller
-        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int) (count);
+        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int)(count);
         robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
 
         // Turn On RUN_TO_POSITION
@@ -159,6 +157,7 @@ public class EncoderAuto extends LinearOpMode {
 
         robot.elbowMotor.setPower(0.3);
 
+        runtime.reset();
         while (opModeIsActive() && robot.elbowMotor.isBusy()) {
             // Display it for the driver.
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
@@ -166,10 +165,10 @@ public class EncoderAuto extends LinearOpMode {
         }
 
 //         Stop all motion;
-        stopRobot();
+//        stopRobot();
 
 //         Turn off RUN_TO_POSITION
-        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
@@ -186,6 +185,7 @@ public class EncoderAuto extends LinearOpMode {
 
         robot.elbowMotor.setPower(0.3);
 
+        runtime.reset();
         while (opModeIsActive() && robot.elbowMotor.isBusy()) {
             // Display it for the driver.
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
@@ -199,13 +199,38 @@ public class EncoderAuto extends LinearOpMode {
 //        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    //Functions
+    public void launchRingHigh(int seconds){
+        //servo pushes ring forward
+        robot.ringFlicker.setPosition(0.5);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+
+        }
+
+        //bring flicker back
+        robot.ringFlicker.setPosition(0.25);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
+        }
+        //TODO last ring needs time to launch before motor powers down
+
+    }
+
+    // The function for the drop-off of the wobble goal
+    public void dropWobbleGoal() {
+
+        lower(50);
+
+        robot.wobbleSnatcher.setPosition(1); // open claw
+    }
+
     public void resetEncoder()
     {
         robot.motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     public void startEncoderMode()
     {
@@ -214,6 +239,7 @@ public class EncoderAuto extends LinearOpMode {
         robot.motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void stopEncoderMode()
     {
@@ -221,6 +247,7 @@ public class EncoderAuto extends LinearOpMode {
         robot.motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 
@@ -415,20 +442,97 @@ public class EncoderAuto extends LinearOpMode {
     }
 
 
-    public void turnleft(double speed)
+    public void turnleft(double inches)
     {
 
-        robot.motorFL.setPower(-speed);         robot.motorFR.setPower(speed);
-        robot.motorBL.setPower(-speed);         robot.motorBR.setPower(speed);
+        telemetry.addData("Func", "in turn left");
+        telemetry.update();
+
+        int newmotorFLTarget;
+        int newmotorFRTarget;
+        int newmotorBLTarget;
+        int newmotorBRTarget;
+
+        // Determine new target position, and pass to motor controller
+        newmotorFLTarget = robot.motorFL.getCurrentPosition() +  (int)(inches * robot.COUNTS_PER_INCH);      newmotorFRTarget = robot.motorFR.getCurrentPosition() - (int)(inches * robot.COUNTS_PER_INCH);
+        newmotorBLTarget = robot.motorBL.getCurrentPosition() + (int)(inches * robot.COUNTS_PER_INCH);       newmotorBRTarget = robot.motorBR.getCurrentPosition() - (int)(inches * robot.COUNTS_PER_INCH);
+
+        robot.motorFL.setTargetPosition(newmotorFLTarget);
+        robot.motorFR.setTargetPosition(newmotorFRTarget);
+        robot.motorBL.setTargetPosition(newmotorBLTarget);
+        robot.motorBR.setTargetPosition(newmotorBRTarget);
+
+        // Turn On RUN_TO_POSITION
+        robot.motorFL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.motorFR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.motorFL.setPower(Math.abs(robot.DRIVE_SPEED));
+        robot.motorFR.setPower(Math.abs(robot.DRIVE_SPEED));
+        robot.motorBL.setPower(Math.abs(robot.DRIVE_SPEED));
+        robot.motorBR.setPower(Math.abs(robot.DRIVE_SPEED));
+        runtime.reset();
+        while (opModeIsActive() && (robot.motorFL.isBusy() || robot.motorFR.isBusy() || robot.motorBL.isBusy() || robot.motorBR.isBusy())) {
+            // Display it for the driver.
+            telemetry.addData("Path1",  "Running to %7d :%7d", newmotorFLTarget, newmotorFRTarget );
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        stopRobot();
+
+        // Turn off RUN_TO_POSITION
+        robot.motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void turnright(double speed)
+
+    public void turnright(double inches)
     {
+        telemetry.addData("Func", "in turn left");
+        telemetry.update();
 
-        robot.motorFL.setPower(speed);          robot.motorFR.setPower(-speed);
-        robot.motorBL.setPower(speed);          robot.motorBR.setPower(-speed);
+        int newmotorFLTarget;
+        int newmotorFRTarget;
+        int newmotorBLTarget;
+        int newmotorBRTarget;
+
+        // Determine new target position, and pass to motor controller
+        newmotorFLTarget = robot.motorFL.getCurrentPosition() - (int)(inches * robot.COUNTS_PER_INCH);      newmotorFRTarget = robot.motorFR.getCurrentPosition() + (int)(inches * robot.COUNTS_PER_INCH);
+        newmotorBLTarget = robot.motorBL.getCurrentPosition() - (int)(inches * robot.COUNTS_PER_INCH);      newmotorBRTarget = robot.motorBR.getCurrentPosition() + (int)(inches * robot.COUNTS_PER_INCH);
+        robot.motorFL.setTargetPosition(newmotorFLTarget);
+        robot.motorFR.setTargetPosition(newmotorFRTarget);
+        robot.motorBL.setTargetPosition(newmotorBLTarget);
+        robot.motorBR.setTargetPosition(newmotorBRTarget);
+
+        // Turn On RUN_TO_POSITION
+        robot.motorFL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.motorFR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.motorFL.setPower(Math.abs(robot.DRIVE_SPEED));
+        robot.motorFR.setPower(Math.abs(robot.DRIVE_SPEED));
+        robot.motorBL.setPower(Math.abs(robot.DRIVE_SPEED));
+        robot.motorBR.setPower(Math.abs(robot.DRIVE_SPEED));
+        runtime.reset();
+        while (opModeIsActive() && (robot.motorFL.isBusy() || robot.motorFR.isBusy() || robot.motorBL.isBusy() || robot.motorBR.isBusy())) {
+            // Display it for the driver.
+            telemetry.addData("Path1",  "Running to %7d :%7d", newmotorFLTarget, newmotorFRTarget );
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        stopRobot();
+
+        // Turn off RUN_TO_POSITION
+        robot.motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
-
 
 
 
@@ -452,11 +556,22 @@ public class EncoderAuto extends LinearOpMode {
     }
 
 
-    public void pickUp() {
+    public void pickUpWobble() {
 
         //move into position
-        robot.wobbleSnatcher.setPosition(0.3); //close the claw
-        raise(10);
+        raise(60);
+        robot.wobbleSnatcher.setPosition(0.3);
+
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 1) {
+
+        }
+        raise(150);
+
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 1) {
+
+        }
         telemetry.addData("The Wobble Goal", "Has Risen");
         telemetry.update();
 

@@ -15,9 +15,14 @@ public class teleOp extends LinearOpMode {
         robot.init(hardwareMap);
         boolean openToggle = false;
 
+        robot.elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         waitForStart();
 
         while (opModeIsActive()) {
+
+            //TODO decrease speed in teleop so movements are not as jerky
 
             double vertical = gamepad1.left_stick_y; //move forward, backward
             double horizontal = -gamepad1.left_stick_x; //move left, right
@@ -39,11 +44,11 @@ public class teleOp extends LinearOpMode {
             }
 
             if(gamepad1.dpad_up){
-                robot.pitcherMotor.setPower(0.8);
+                robot.pitcherMotor.setPower(0.675);
             }
 
             if(gamepad1.dpad_right){
-                robot.pitcherMotor.setPower(0.9);
+                robot.pitcherMotor.setPower(0.7);
             }
 
 //            if (gamepad1.left_trigger > 0.2) {
@@ -69,22 +74,22 @@ public class teleOp extends LinearOpMode {
                 robot.wobbleSnatcher.setPosition(0);
             }
 
-            if(gamepad1.x){
+            if(gamepad1.x){ //flick ring
                 robot.ringFlicker.setPosition(0.5);
             }
-            if(gamepad1.b) {
+            if(gamepad1.b) { //bring back
                 robot.ringFlicker.setPosition(0.25);
             }
 
 
             //up arm
             if(gamepad1.left_bumper){
-                lower(30);
+                raise(30);
             }
 
             //down arm
             if(gamepad1.right_bumper){
-                raise(10);
+                lower(10);
             }
 
 
@@ -114,33 +119,6 @@ public class teleOp extends LinearOpMode {
         int newElbowMotorTarget;
 
         // Determine new target position, and pass to motor controller
-        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int) (count);
-        robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
-
-        // Turn On RUN_TO_POSITION
-        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.elbowMotor.setPower(0.3);
-
-        while (opModeIsActive() && robot.elbowMotor.isBusy()) {
-            // Display it for the driver.
-            telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
-            telemetry.update();
-        }
-
-//         Stop all motion;
-//        stopRobot();
-
-//         Turn off RUN_TO_POSITION
-        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
-
-    public void lower(double count) {
-
-        int newElbowMotorTarget;
-
-        // Determine new target position, and pass to motor controller
         newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() - (int) (count);
         robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
 
@@ -155,11 +133,38 @@ public class teleOp extends LinearOpMode {
             telemetry.update();
         }
 
+//         Stop all motion;
+//         robot.elbowMotor.setPower(0);
+
+//         Turn off RUN_TO_POSITION
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void lower(double count) {
+
+        int newElbowMotorTarget;
+
+        // Determine new target position, and pass to motor controller
+        newElbowMotorTarget = robot.elbowMotor.getCurrentPosition() + (int) (count);
+        robot.elbowMotor.setTargetPosition(newElbowMotorTarget);
+
+        // Turn On RUN_TO_POSITION
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.elbowMotor.setPower(0.3);
+        //TODO test with wait time to eliminate debounce
+        while (opModeIsActive() && robot.elbowMotor.isBusy()) {
+            // Display it for the driver.
+            telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
+            telemetry.update();
+        }
+
 //        // Stop all motion;
-//        stopRobot();
+//        robot.elbowMotor.setPower(0);
 //
 //        // Turn off RUN_TO_POSITION
-//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
 

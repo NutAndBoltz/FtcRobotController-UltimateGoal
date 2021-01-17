@@ -71,7 +71,7 @@ public class robotInit {
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         pitcherMotor.setDirection(DcMotor.Direction.REVERSE);
-        elbowMotor.setDirection(DcMotor.Direction.REVERSE);
+        elbowMotor.setDirection(DcMotor.Direction.FORWARD);
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
@@ -101,7 +101,7 @@ public class robotInit {
 
 
         //init servos
-        wobbleSnatcher.setPosition(0.3);
+        wobbleSnatcher.setPosition(1);
 
     }
 }

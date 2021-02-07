@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//@Disabled
 @TeleOp
 public class teleOp extends LinearOpMode {
     public robotInit robot = new robotInit();
@@ -35,20 +34,26 @@ public class teleOp extends LinearOpMode {
             robot.motorBR.setPower(vertical + horizontal - turn);
 
             //flywheel
-            if(gamepad1.dpad_down){
+            if(gamepad1.dpad_down){ //turn off flywheel
                 robot.pitcherMotor.setPower(0);
             }
 
-            if(gamepad1.dpad_left){
-                robot.pitcherMotor.setPower(0.6);
+            if(gamepad1.dpad_left){ // mid goal
+                launchRing("midGoal");
+                telemetry.addData("Launching Ring", "Mid");
+                telemetry.update();
             }
 
-            if(gamepad1.dpad_up){
-                robot.pitcherMotor.setPower(0.675);
+            if(gamepad1.dpad_up){ //high goal
+                launchRing("highGoal");
+                telemetry.addData("Launching Ring", "High");
+                telemetry.update();
             }
 
             if(gamepad1.dpad_right){
-                robot.pitcherMotor.setPower(0.7);
+                launchRing("powerShot");
+                telemetry.addData("Launching Ring", "Power");
+                telemetry.update();
             }
 
 //            if (gamepad1.left_trigger > 0.2) {
@@ -67,51 +72,70 @@ public class teleOp extends LinearOpMode {
 //
 //            }
 
-            if(gamepad1.a){
-                robot.wobbleSnatcher.setPosition(1);
+            if(gamepad1.a){ //lower arm and release wobble
+                lower(100);
             }
-            if(gamepad1.y){
-                robot.wobbleSnatcher.setPosition(0);
+            if(gamepad1.y){ //snatch wobble and raise arm
+                raise(100);
             }
 
-            if(gamepad1.x){ //flick ring
-                robot.ringFlicker.setPosition(0.5);
+            if(gamepad1.x){ //release wobble servo
+                robot.wobbleSnatcher.setPosition(1);
             }
-            if(gamepad1.b) { //bring back
-                robot.ringFlicker.setPosition(0.25);
+            if(gamepad1.b) { //clamp wobble servo
+                robot.wobbleSnatcher.setPosition(0);
             }
 
 
             //up arm
             if(gamepad1.left_bumper){
-                raise(30);
+                robot.intakeMotor.setPower(0);
             }
 
             //down arm
             if(gamepad1.right_bumper){
-                lower(10);
+                robot.intakeMotor.setPower(0.5);
             }
 
-
         }
-
-
             telemetry.addData("Status", "Running");
             telemetry.addLine();
             telemetry.update();
-
     }
+    String previousTarget = "";
+    public void launchRing(String target){
 
-    public void launchRingHigh(int seconds){
-        //servo pushes ring forward
-        robot.ringFlicker.setPosition(0.6); //We need to test this
-
-        //wheel spins until launch, spin speed = distance launched
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < seconds)) {
-            robot.pitcherMotor.setPower(0.9);
+        //TODO no matter what target we choose, the motor's velocity sequentially gets set to powerShot --> midGoal --> highGoal
+        if(target.equals("powerShot")) {
+            robot.pitcherMotor.setPower(0.65);
+        }else if(target.equals("midGoal")){
+            robot.pitcherMotor.setPower(0.62);
+        }else if(target.equals("highGoal")){
+            robot.pitcherMotor.setPower(0.68);
         }
-        robot.pitcherMotor.setPower(0);
+        if (robot.pitcherMotor.getPower() == 0 || previousTarget != target){
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < 2)) {
+                telemetry.addData("Please wait", "Getting up to speed");
+                telemetry.addLine();
+                telemetry.update();
+            }
+            previousTarget = target;
+        }
+
+
+        //servo pushes ring forward
+        robot.ringFlicker.setPosition(0.5);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+        }
+
+        //bring flicker back
+        robot.ringFlicker.setPosition(0.25);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+        }
+
     }
 
     public void raise(double count) {
@@ -133,13 +157,6 @@ public class teleOp extends LinearOpMode {
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
             telemetry.update();
         }
-
-//         Stop all motion;
-//         robot.elbowMotor.setPower(0);
-
-//         Turn off RUN_TO_POSITION
-        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
     }
 
     public void lower(double count) {
@@ -161,12 +178,6 @@ public class teleOp extends LinearOpMode {
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
             telemetry.update();
         }
-
-//        // Stop all motion;
-//        robot.elbowMotor.setPower(0);
-//
-//        // Turn off RUN_TO_POSITION
-        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
 

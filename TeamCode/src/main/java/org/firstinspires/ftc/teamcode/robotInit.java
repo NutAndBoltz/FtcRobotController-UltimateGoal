@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -72,7 +73,7 @@ public class robotInit {
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         pitcherMotor.setDirection(DcMotor.Direction.REVERSE);
         elbowMotor.setDirection(DcMotor.Direction.FORWARD);
-        intakeMotor.setDirection(DcMotor.Direction.REVERSE);
+        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         motorBL.setPower(0);
@@ -102,6 +103,15 @@ public class robotInit {
 
         //init servos
         wobbleSnatcher.setPosition(1);
+
+//        pitcherMotor.setVelocityPIDFCoefficients(1.17, 0.117, 0, 11.7);
+
+        //max velocity = max rpm/60 * gear ratio * ticks/rev = 2800 tick/sec
+        // F = 32767 / maxV = 11.7025
+        // P = 0.1 * F = 1.17025
+        // I = 0.1 * P = .117025
+        // D = 0
+//        pitcherMotor.setVelocityPIDFCoefficients(1.17025, .117025, 0, 11.7025);
 
     }
 }

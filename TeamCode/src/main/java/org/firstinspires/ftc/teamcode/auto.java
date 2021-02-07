@@ -15,12 +15,11 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@Autonomous(name="Auto w/ Enco", group="Pushbot")
-public class EncoderAuto extends LinearOpMode {
+@Autonomous(name="Auto", group="Pushbot")
+public class auto extends LinearOpMode {
 
     public robotInit robot = new robotInit();
     ElapsedTime runtime = new ElapsedTime();
@@ -50,42 +49,33 @@ public class EncoderAuto extends LinearOpMode {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
         });
-        telemetry.addLine("Waiting for start");
-        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
+        telemetry.addLine("Waiting for start");
+        telemetry.update();
         waitForStart();
 
+        // wait for 3 seconds for camera to register num of rings
+        sleep(3000);
 
         //Place wobble goal in the correct target zone
-// /*
         if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
             telemetry.addData("Detected", "four rings!");
             telemetry.update();
-        /*
+
             pickUpWobble();
 
             //Move away from the rings on the field
-            moveLeft(16);
+            moveLeft(38);
 
             //move to launch line       //109 in total distance
             moveForward(55);
 
             //angle launch ramp to high goal
-            turnright(5.3);
+            turnright(5.2);
 
             //launch 3 preloaded rings
-            robot.pitcherMotor.setPower(0.69); //power up flywheel for 1.5 secs
-            runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-            }
-
-            for (int i = 0; i < 3; i++){ //launch 3 rings
-                launchRingHigh(4);
-                telemetry.addData("Launching Ring", "High");
-                telemetry.update();
-            }
-            robot.pitcherMotor.setPower(0); //power off flywheel
+            launchRingHigh(3);
 
             //turn to face forward
             turnleft(5.3);
@@ -95,42 +85,32 @@ public class EncoderAuto extends LinearOpMode {
 
             //Place the wobble goal
             dropWobbleGoal();
-
             runtime.reset();
             while (opModeIsActive() && (runtime.seconds() < 1.5)) {
             }
 
             //drive backwards until parked over line
             moveBackward(30);
-        */
 
-        } else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
+        }
+
+        else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
             telemetry.addData("Detected", "one ring"); //1 = B, middle
             telemetry.update();
-        /*
+
             pickUpWobble();
 
             //Move away from the rings on the field
-            moveLeft(16);
+            moveLeft(38);
 
             //move to launch line       //90 in total distance
             moveForward(55);
 
             //angle launch ramp to high goal
-            turnright(5.3);
+            turnright(5.2);
 
             //launch 3 preloaded rings
-            robot.pitcherMotor.setPower(0.69); //power up flywheel for 1.5 secs
-            runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-            }
-
-            for (int i = 0; i < 3; i++){ //launch 3 rings
-                launchRingHigh(4);
-                telemetry.addData("Launching Ring", "High");
-                telemetry.update();
-            }
-            robot.pitcherMotor.setPower(0); //power off flywheel
+            launchRingHigh(3);
 
             //turn to face forward
             turnleft(3);
@@ -138,59 +118,96 @@ public class EncoderAuto extends LinearOpMode {
             //move to box B
             moveForward(26);
 
+            moveRight(25);
+
             //Place the wobble goal
             dropWobbleGoal();
-
             runtime.reset();
             while (opModeIsActive() && (runtime.seconds() < 1.5)) {
             }
 
             //drive backwards until parked over line
-            moveBackward(15);
-        */
-        } else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
+            moveBackward(5);
+
+        }
+
+        else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
             telemetry.addData("Detected", "no rings");
             telemetry.update();
 
-            //0 = A, close
-//            moveForward(65);
-//            moveLeft(12);
+            pickUpWobble();
+
+            //Move away from the rings on the field
+            moveLeft(38);
+
+            //move to launch line       //90 in total distance
+            moveForward(55);
+
+            //angle launch ramp to high goal
+            turnright(5);
+
+            //launch 3 preloaded rings
+            launchRingHigh(3);
+
+            //turn to face forward
+            turnleft(4);
 
             //Place the wobble goal
-//            dropWobbleGoal();
-
-            //move to the launch line's designates spot
-//            moveRight(24);
+            dropWobbleGoal();
+            while (opModeIsActive() && (runtime.seconds() < 1)) {
+            }
+            //park over line
+            moveForward(10);
 
         }
-
-//*/
-
-/*
-        //testing ring launch code
-        robot.pitcherMotor.setPower(0.64); //power up flywheel for 1.5 secs
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.5)) {
-        }
-
-        for (int i = 0; i < 3; i++){ //launch 3 rings
-            launchRingHigh(4);
-            telemetry.addData("Launching Ring", "High");
-            telemetry.update();
-        }
-        robot.pitcherMotor.setPower(0); //power off flywheel
-*/
-
-
 
         // Stop, take a well deserved breather
         sleep(1000);     // pause for servos to move
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
     }
 
-    //Functions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* FUNCTIONS */
+
+    public void launchRingHigh(int times){
+        robot.pitcherMotor.setPower(0.73);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 3)) { }
+
+        for (int i = 0; i < times; i++){ //launch
+            telemetry.addData("Launching High Ring #", i+1);
+            telemetry.update();
+
+            //servo pushes ring forward
+            robot.ringFlicker.setPosition(0.5);
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < 0.5)) { }
+
+            //bring flicker back
+            robot.ringFlicker.setPosition(0.25);
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < 0.5)) { }
+        }
+        robot.pitcherMotor.setPower(0); //power off flywheel
+    }
+
+    /* ARM MOVEMENT */
     public void raise(double count) {
 
         int newElbowMotorTarget;
@@ -210,12 +227,6 @@ public class EncoderAuto extends LinearOpMode {
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
             telemetry.update();
         }
-
-//         Stop all motion;
-//        stopRobot();
-
-//         Turn off RUN_TO_POSITION
-//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
@@ -238,39 +249,31 @@ public class EncoderAuto extends LinearOpMode {
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
             telemetry.update();
         }
-
-//        // Stop all motion;
-//        stopRobot();
-//
-//        // Turn off RUN_TO_POSITION
-//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void launchRingHigh(int seconds){
-        //servo pushes ring forward
-        robot.ringFlicker.setPosition(0.5);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+    public void pickUpWobble() {
 
-        }
+        //move into position
+        raise(60);
+        robot.wobbleSnatcher.setPosition(0.3);
 
-        //bring flicker back
-        robot.ringFlicker.setPosition(0.25);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1)) {
-        }
-        //TODO last ring needs time to launch before motor powers down
+        while (opModeIsActive() && runtime.seconds() < 1) { }
+        raise(150);
+
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 1) { }
+        telemetry.addData("The Wobble Goal", "Has Risen");
+        telemetry.update();
 
     }
 
-    // The function for the drop-off of the wobble goal
     public void dropWobbleGoal() {
-
         lower(50);
-
         robot.wobbleSnatcher.setPosition(1); // open claw
     }
 
+    /* ENCODER FUNCTIONS */
     public void resetEncoder()
     {
         robot.motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -288,22 +291,10 @@ public class EncoderAuto extends LinearOpMode {
         robot.motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void stopEncoderMode()
-    {
-        robot.motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
 
 
-    //movement functions
-    public void moveForward(int inches)
-    {
-        telemetry.addData("Func", "in Move Forward");
-        telemetry.update();
-
+    /* MOVEMENT FUNCTIONS */
+    public void moveForward(int inches) {
         int newmotorFLTarget;
         int newmotorFRTarget;
         int newmotorBLTarget;
@@ -347,14 +338,11 @@ public class EncoderAuto extends LinearOpMode {
     }
 
 
-    public void moveBackward(double inches)
-    {
+    public void moveBackward(double inches) {
         int newmotorFLTarget;
         int newmotorFRTarget;
         int newmotorBLTarget;
         int newmotorBRTarget;
-
-
 
         // Determine new target position, and pass to motor controller
         newmotorFLTarget = robot.motorFL.getCurrentPosition() + (int)(inches * robot.COUNTS_PER_INCH);
@@ -395,13 +383,11 @@ public class EncoderAuto extends LinearOpMode {
     }
 
 
-    public void moveRight(double inches)
-    {
+    public void moveRight(double inches) {
         int newmotorFLTarget;
         int newmotorFRTarget;
         int newmotorBLTarget;
         int newmotorBRTarget;
-
 
         // Determine new target position, and pass to motor controller
         newmotorFLTarget = robot.motorFL.getCurrentPosition() - (int)(inches * robot.COUNTS_PER_INCH);
@@ -442,13 +428,11 @@ public class EncoderAuto extends LinearOpMode {
 
     }
 
-    public void moveLeft(double inches)
-    {
+    public void moveLeft(double inches) {
         int newmotorFLTarget;
         int newmotorFRTarget;
         int newmotorBLTarget;
         int newmotorBRTarget;
-
 
         // Determine new target position, and pass to motor controller
         newmotorFLTarget = robot.motorFL.getCurrentPosition() + (int)(inches * robot.COUNTS_PER_INCH);
@@ -489,12 +473,7 @@ public class EncoderAuto extends LinearOpMode {
     }
 
 
-    public void turnleft(double inches)
-    {
-
-        telemetry.addData("Func", "in turn left");
-        telemetry.update();
-
+    public void turnleft(double inches) {
         int newmotorFLTarget;
         int newmotorFRTarget;
         int newmotorBLTarget;
@@ -536,11 +515,7 @@ public class EncoderAuto extends LinearOpMode {
         robot.motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void turnright(double inches)
-    {
-        telemetry.addData("Func", "in turn left");
-        telemetry.update();
-
+    public void turnright(double inches) {
         int newmotorFLTarget;
         int newmotorFRTarget;
         int newmotorBLTarget;
@@ -581,18 +556,14 @@ public class EncoderAuto extends LinearOpMode {
         robot.motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-
-
-    public void stopRobot()
-    {
+    public void stopRobot() {
         robot.motorFL.setPower(0);
         robot.motorFR.setPower(0);
         robot.motorBL.setPower(0);
         robot.motorBR.setPower(0);
     }
 
-    public void stopRobot(int seconds)
-    {
+    public void stopRobot(int seconds) {
         //delay
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < seconds)) {
@@ -603,29 +574,7 @@ public class EncoderAuto extends LinearOpMode {
     }
 
 
-    public void pickUpWobble() {
-
-        //move into position
-        raise(60);
-        robot.wobbleSnatcher.setPosition(0.3);
-
-        runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < 1) {
-
-        }
-        raise(150);
-
-        runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < 1) {
-
-        }
-        telemetry.addData("The Wobble Goal", "Has Risen");
-        telemetry.update();
-
-    }
-
-
-
+    /* VUFORIA RING DETECTION */
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         /*
@@ -647,13 +596,13 @@ public class EncoderAuto extends LinearOpMode {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(120,170);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(85,183);
 
         static final int REGION_WIDTH = 50;
         static final int REGION_HEIGHT = 50;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        final int FOUR_RING_THRESHOLD = 145; //143-148
+        final int ONE_RING_THRESHOLD = 125; //119-131
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -671,7 +620,7 @@ public class EncoderAuto extends LinearOpMode {
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile SkystoneDeterminationPipeline.RingPosition position = SkystoneDeterminationPipeline.RingPosition.ONE;
+        public volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -696,9 +645,7 @@ public class EncoderAuto extends LinearOpMode {
         {
             inputToCb(input);
 
-//            avg1 = (int) Core.mean(region1_Cb).val[0];
-            avg1 = 140;
-
+            avg1 = (int) Core.mean(region1_Cb).val[0];
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
@@ -707,13 +654,13 @@ public class EncoderAuto extends LinearOpMode {
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
+            position = RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD){
-                position = SkystoneDeterminationPipeline.RingPosition.FOUR;
+                position = RingPosition.FOUR;
             }else if (avg1 > ONE_RING_THRESHOLD){
-                position = SkystoneDeterminationPipeline.RingPosition.ONE;
+                position = RingPosition.ONE;
             }else{
-                position = SkystoneDeterminationPipeline.RingPosition.NONE;
+                position = RingPosition.NONE;
             }
 
             Imgproc.rectangle(
@@ -721,7 +668,7 @@ public class EncoderAuto extends LinearOpMode {
                     region1_pointA, // First point which defines the rectangle
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
+                    1); // Negative thickness means solid fill
 
             return input;
         }

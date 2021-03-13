@@ -72,18 +72,33 @@ public class teleOp extends LinearOpMode {
 //
 //            }
 
-            if(gamepad1.a){ //lower arm and release wobble
-                lower(100);
-            }
             if(gamepad1.y){ //snatch wobble and raise arm
-                raise(100);
+                raise(75);
             }
+            if(gamepad1.a){ //lower arm and release wobble
+                lower(75);
+            }
+
 
             if(gamepad1.x){ //release wobble servo
                 robot.wobbleSnatcher.setPosition(1);
             }
             if(gamepad1.b) { //clamp wobble servo
-                robot.wobbleSnatcher.setPosition(0);
+                robot.wobbleSnatcher.setPosition(0.5);
+            }
+
+            if(gamepad1.back){
+                //servo pushes ring forward
+                robot.ringFlicker.setPosition(0.5);
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+                }
+
+                //bring flicker back
+                robot.ringFlicker.setPosition(0.25);
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+                }
             }
 
 
@@ -124,18 +139,6 @@ public class teleOp extends LinearOpMode {
         }
 
 
-        //servo pushes ring forward
-        robot.ringFlicker.setPosition(0.5);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
-        }
-
-        //bring flicker back
-        robot.ringFlicker.setPosition(0.25);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
-        }
-
     }
 
     public void raise(double count) {
@@ -157,6 +160,11 @@ public class teleOp extends LinearOpMode {
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
             telemetry.update();
         }
+
+//        robot.elbowMotor.setPower(0);
+//
+//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public void lower(double count) {
@@ -178,6 +186,11 @@ public class teleOp extends LinearOpMode {
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
             telemetry.update();
         }
+
+//        robot.elbowMotor.setPower(0);
+//
+//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 }
 

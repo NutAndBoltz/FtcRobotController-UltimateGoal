@@ -39,7 +39,7 @@ public class robotInit {
     double     DRIVE_GEAR_REDUCTION    = 1.0 ;
     double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /(WHEEL_DIAMETER_INCHES * Math.PI);
-    double     DRIVE_SPEED             = 0.5;
+    double     DRIVE_SPEED             = 0.95;
     double     teleOP_FORWARD_SPEED    = 1;
 
     /* local OpMode members. */

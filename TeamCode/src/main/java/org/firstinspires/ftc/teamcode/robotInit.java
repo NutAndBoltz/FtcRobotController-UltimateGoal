@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 //@Disabled
 public class robotInit {
@@ -16,22 +12,12 @@ public class robotInit {
     public DcMotor motorFR;
     public DcMotor motorBL;
     public DcMotor motorBR;
-    public DcMotor pitcherMotor; //rotating wheel to launch rings
+    public DcMotorEx pitcherMotor; //rotating wheel to launch rings
     public DcMotor elbowMotor; //wobble goal arm
     public DcMotor intakeMotor;
 
     public Servo wobbleSnatcher; //wobble goal servo claw
     public Servo ringFlicker; // launch ring pusher
-
-
-
-
-    public ModernRoboticsI2cGyro   gyro    = null;
-
-    int AUTO = 1;
-    int TELEOP = 0;
-
-    double     MID_SERVO  =  0.5 ;
 
 
     //from Encoder Sample
@@ -44,7 +30,6 @@ public class robotInit {
 
     /* local OpMode members. */
     HardwareMap hardwareMap           =  null;
-    ElapsedTime runtime  = new ElapsedTime();
 
     /* Constructor */
     public robotInit(){
@@ -63,7 +48,7 @@ public class robotInit {
         motorFR = hardwareMap.get(DcMotor.class, "motor_fr");
         motorBL = hardwareMap.get(DcMotor.class, "motor_bl");
         motorBR = hardwareMap.get(DcMotor.class, "motor_br");
-        pitcherMotor = hardwareMap.get(DcMotor.class, "pitcherMotor");
+        pitcherMotor = hardwareMap.get(DcMotorEx.class, "pitcherMotor");
         elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
@@ -91,7 +76,7 @@ public class robotInit {
         motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pitcherMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pitcherMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elbowMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -104,14 +89,13 @@ public class robotInit {
         //init servos
         wobbleSnatcher.setPosition(1);
 
-//        pitcherMotor.setVelocityPIDFCoefficients(1.17, 0.117, 0, 11.7);
-
-        //max velocity = max rpm/60 * gear ratio * ticks/rev = 2800 tick/sec
-        // F = 32767 / maxV = 11.7025
-        // P = 0.1 * F = 1.17025
-        // I = 0.1 * P = .117025
-        // D = 0
-//        pitcherMotor.setVelocityPIDFCoefficients(1.17025, .117025, 0, 11.7025);
+        //PIDF calculations and settings
+        pitcherMotor.setVelocityPIDFCoefficients(1.343, 0.1343, 0.1, 13.43);
+        //max velocity 2440
+        // F: 13.43
+        // P: 1.343
+        // I: 0.1343
+        // D: 0
 
     }
 }

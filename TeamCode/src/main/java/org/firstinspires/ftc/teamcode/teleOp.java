@@ -21,11 +21,11 @@ public class teleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            //TODO decrease speed in teleop so movements are not as jerky
 
             double vertical = gamepad1.left_stick_y; //move forward, backward
             double horizontal = -gamepad1.left_stick_x; //move left, right
             double turn = -gamepad1.right_stick_x; //turn left, right
+            double fudge = 0.25; //TODO decrease speed with fudge factor/power curve so movements are not as jerky
 
             //driving
             robot.motorFL.setPower(vertical + horizontal + turn);
@@ -41,36 +41,24 @@ public class teleOp extends LinearOpMode {
             if(gamepad1.dpad_left){ // mid goal
                 launchRing("midGoal");
                 telemetry.addData("Launching Ring", "Mid");
+                telemetry.addData("Velocity", robot.pitcherMotor.getVelocity());
                 telemetry.update();
             }
 
             if(gamepad1.dpad_up){ //high goal
                 launchRing("highGoal");
                 telemetry.addData("Launching Ring", "High");
+                telemetry.addData("Velocity", robot.pitcherMotor.getVelocity());
                 telemetry.update();
             }
 
             if(gamepad1.dpad_right){
                 launchRing("powerShot");
                 telemetry.addData("Launching Ring", "Power");
+                telemetry.addData("Velocity", robot.pitcherMotor.getVelocity());
                 telemetry.update();
             }
 
-//            if (gamepad1.left_trigger > 0.2) {
-//                robot.intakeMotor.setPower(1);
-//            }
-
-            //wobble servo open/close
-//            if (gamepad1.b && openToggle == false) {
-//                //open the claw
-//                robot.wobbleSnatcher.setPosition(0.6);
-//
-//            }
-//            if (gamepad1.b && openToggle == true) {
-//                //close the claw
-//                robot.wobbleSnatcher.setPosition(0.3);
-//
-//            }
 
             if(gamepad1.y){ //snatch wobble and raise arm
                 raise(75);
@@ -102,33 +90,46 @@ public class teleOp extends LinearOpMode {
             }
 
 
-            //up arm
+            //stop intake
             if(gamepad1.left_bumper){
                 robot.intakeMotor.setPower(0);
             }
 
-            //down arm
+            //start intake
             if(gamepad1.right_bumper){
-                robot.intakeMotor.setPower(0.5);
+                robot.intakeMotor.setPower(0.9);
             }
 
         }
-            telemetry.addData("Status", "Running");
-            telemetry.addLine();
-            telemetry.update();
+        telemetry.addData("Status", "Running");
+        telemetry.addLine();
+        telemetry.update();
     }
+
+
+
+
+
+
+
+    /* FUNCTIONS */
+
     String previousTarget = "";
     public void launchRing(String target){
 
         //TODO no matter what target we choose, the motor's velocity sequentially gets set to powerShot --> midGoal --> highGoal
         if(target.equals("powerShot")) {
-            robot.pitcherMotor.setPower(0.65);
+            //robot.pitcherMotor.setPower(0.65);
+            robot.pitcherMotor.setVelocity(1850);
         }else if(target.equals("midGoal")){
-            robot.pitcherMotor.setPower(0.62);
+            //robot.pitcherMotor.setPower(0.62);
+            robot.pitcherMotor.setVelocity(1840);
         }else if(target.equals("highGoal")){
-            robot.pitcherMotor.setPower(0.68);
+            //robot.pitcherMotor.setPower(0.68);
+            robot.pitcherMotor.setVelocity(2000); //1850
         }
-        if (robot.pitcherMotor.getPower() == 0 || previousTarget != target){
+
+        if (robot.pitcherMotor.getVelocity() == 0 || previousTarget != target){
             runtime.reset();
             while (opModeIsActive() && (runtime.seconds() < 2)) {
                 telemetry.addData("Please wait", "Getting up to speed");
@@ -160,11 +161,6 @@ public class teleOp extends LinearOpMode {
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
             telemetry.update();
         }
-
-//        robot.elbowMotor.setPower(0);
-//
-//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
     }
 
     public void lower(double count) {
@@ -186,10 +182,6 @@ public class teleOp extends LinearOpMode {
             telemetry.addData("Path1",  "Running to %7d", newElbowMotorTarget);
             telemetry.update();
         }
-
-//        robot.elbowMotor.setPower(0);
-//
-//        robot.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 }

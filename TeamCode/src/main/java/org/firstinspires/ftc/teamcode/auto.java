@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -50,87 +49,97 @@ public class auto extends LinearOpMode {
             }
         });
 
+
         // Wait for the game to start (driver presses PLAY)
         telemetry.addLine("Waiting for start");
         telemetry.update();
         waitForStart();
 
-        // wait for 3 seconds for camera to register num of rings
-        sleep(2500);
+
+        /* Telemetry for testing ring detection
+        while (opModeIsActive())
+        {
+            telemetry.addData("Analysis", pipeline.getAnalysis());
+            telemetry.addData("Position", pipeline.position);
+            telemetry.update();
+
+            // Don't burn CPU cycles busy-looping in this sample
+            sleep(50);
+        }
+        */
+
+
+        //pick up wobble goal
+        pickUpWobble();
+
 
         //Place wobble goal in the correct target zone
         if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
             telemetry.addData("Detected", "four rings!");
             telemetry.update();
 
-            pickUpWobble();
-
             //clear the rings
             moveRight(8);
 
             //move to launch line
-            moveForward(51);
+            moveForward(58);
 
             //center robot to front of goal
             moveLeft(10);
 
-            //launch 3 preloaded rings
-            launchRingHigh(3);
+            //launch 3 preloaded rings with more time between shots
+            robot.pitcherMotor.setVelocity(2085); //0.6257 mid, 0.65 speed when 11.8 V, 0.67 when 11.7 V, 0.69 when 10.22 V
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < 2.5)) { }
+
+            for (int i = 0; i < 3; i++){ //launch
+                telemetry.addData("Launching High Ring #", i+1);
+                telemetry.update();
+
+                //servo pushes ring forward
+                robot.ringFlicker.setPosition(0.5);
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < 1)) { }
+
+                //bring flicker back
+                robot.ringFlicker.setPosition(0.25);
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < 1)) { }
+            }
+            robot.pitcherMotor.setPower(0); //power off flywheel
 
             //turn to face C box
             turnleft(8);
 
             //move to box
-            moveForward(60);
+            moveForward(65);
 
             //Place the wobble goal
             dropWobbleGoal();
             runtime.reset();
             while (opModeIsActive() && (runtime.seconds() < 1.5)) {
             }
-            // Predicted end, need to drive to park line
-
-//
-//            //Turn to face other wobble goal at start line
-//            turnleft(40);
-//
-//            //move to wobble goal
-//            moveForward(50);
-//
-//            //pick up wobble goal
-//            pickUpWobble();
-//
-//            //turn to face box
-//            turnleft(40);
-//
-//            //move to box C
-//            moveForward(80);
-//
-//            //Place the wobble goal
-//            dropWobbleGoal();
-//            runtime.reset();
-//            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-//            }
 
             //drive to parking line
             moveBackward(50);
         }
 
+
         else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
+
             telemetry.addData("Detected", "one ring"); //1 = B, middle
             telemetry.update();
 
-            pickUpWobble();
-
-            //move to launch line       //90 in total distance
+            //move to launch line
             moveForward(56);
-
-            moveLeft(16);
 
             //launch 3 preloaded rings
             launchRingHigh(3);
 
-            moveForward(25);
+            moveLeft(16);
+
+            raise(20);
+            moveForward(30);
 
             //Place the wobble goal
             dropWobbleGoal();
@@ -138,14 +147,16 @@ public class auto extends LinearOpMode {
             while (opModeIsActive() && (runtime.seconds() < 1.5)) {
             }
 
-            raise(40);
+            raise(120);
+
+            moveBackward(15);
 
             //angle to 2nd wobble
             turnleft(44);
 
 
-            lower(80);
-            moveForward(50);
+            lower(120);
+            moveForward(43);
 
             //pick up wobble without raising first
             robot.wobbleSnatcher.setPosition(0.3);
@@ -159,86 +170,26 @@ public class auto extends LinearOpMode {
 
             moveBackward(50);
 
-            turnright(50);
+            turnright(40);
 
-//            turnright(10);
-//
-//            dropWobbleGoal(); //to bring the arm down
-//            moveBackward(30);
-//
-//            turnright(43);
-//
-//            moveForward(22);
-//            sleep(1000);
-//
-//            //pick up wobble without raising first
-//            robot.wobbleSnatcher.setPosition(0.3);
-//
-//            runtime.reset();
-//            while (opModeIsActive() && runtime.seconds() < 0.5) { }
-//            raise(150);
-//
-//            runtime.reset();
-//            while (opModeIsActive() && runtime.seconds() < 0.1) { }
-//
-//
-//            moveBackward(22);
-//
-//            turnleft(43);
-//
-//            moveForward(30);
-
-            //Place the wobble goal
             dropWobbleGoal();
-/*
-            //Move away from the rings on the field
-            moveLeft(38);
-
-            //move to launch line       //90 in total distance
-            moveForward(81);
-
-//            //angle launch ramp to high goal
-//            turnright(5.7);
-//
-//            //launch 3 preloaded rings
-//            launchRingHigh(3);
-//
-//            //turn to face forward
-//            turnleft(3);
-//
-//            //move to box B
-//            moveForward(26);
-
-            moveRight(25);
-
-            //Place the wobble goal
-            dropWobbleGoal();
-            runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-            }
-
-            //drive backwards until parked over line
-//            moveBackward(5);
-*/
         }
+
 
         else if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
             telemetry.addData("Detected", "no rings");
             telemetry.update();
 
-            pickUpWobble();
-
-            //move to launch line       //90 in total distance
+            //move to launch line
             moveForward(56);
 
-            moveLeft(18);
 
             //launch 3 preloaded rings
             launchRingHigh(3);
 
-            turnleft(15); //90 deg
-
-            moveForward(10);
+            turnleft(20); //90 deg, 15 before angle to ramp
+            raise(90);
+            moveForward(30);
 
             //Place the wobble goal
             dropWobbleGoal();
@@ -246,15 +197,14 @@ public class auto extends LinearOpMode {
             while (opModeIsActive() && (runtime.seconds() < 1.5)) {
             }
 
-            raise(50);
+            raise(90);
 
-            turnleft(29);
+            turnleft(29); // 29 before
 
 
-            lower(50);
-            dropWobbleGoal(); //to bring the arm down
+            lower(120);
 
-            moveForward(29);
+            moveForward(36);
             sleep(1000);
 
             //pick up wobble without raising first
@@ -269,26 +219,15 @@ public class auto extends LinearOpMode {
                 telemetry.addData("The Wobble Goal", "Has Risen");
                 telemetry.update();
 
-            turnright(4);
+            turnright(4.5); //4 before
 
             moveBackward(45);
 
-            turnright(18); //90 deg
+            turnright(19); //90 deg
 
             //Place the wobble goal
             dropWobbleGoal();
 
-//            moveRight(15);
-
-
-//            //angle launch ramp to high goal
-//            turnright(5.7);
-//
-//            //launch 3 preloaded rings
-//            launchRingHigh(3);
-//
-//            //turn to face forward
-//            turnleft(4);
 
 
         }
@@ -309,16 +248,10 @@ public class auto extends LinearOpMode {
 
 
 
-
-
-
-
-
-
     /* FUNCTIONS */
 
     public void launchRingHigh(int times){
-        robot.pitcherMotor.setPower(0.65); //0.6257 mid, 0.65 speed when 11.8 V, 0.67 when 11.7 V, 0.69 when 10.22 V
+        robot.pitcherMotor.setVelocity(2085); //0.6257 mid, 0.65 speed when 11.8 V, 0.67 when 11.7 V, 0.69 when 10.22 V
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 2.5)) { }
 
@@ -386,12 +319,12 @@ public class auto extends LinearOpMode {
     public void pickUpWobble() {
 
         //move into position
-        raise(60);
+        raise(20);
         robot.wobbleSnatcher.setPosition(0.3);
 
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() < 1) { }
-        raise(130);
+        raise(25);
 
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() < 1) { }
@@ -401,7 +334,7 @@ public class auto extends LinearOpMode {
     }
 
     public void dropWobbleGoal() {
-        lower(70);
+        lower(25);
         robot.wobbleSnatcher.setPosition(1); // open claw
     }
 
@@ -733,7 +666,7 @@ public class auto extends LinearOpMode {
         static final int REGION_WIDTH = 50;
         static final int REGION_HEIGHT = 50;
 
-        final int FOUR_RING_THRESHOLD = 145; //143-148
+        final int FOUR_RING_THRESHOLD = 135; //143-148
         final int ONE_RING_THRESHOLD = 125; //119-131
 
         Point region1_pointA = new Point(
